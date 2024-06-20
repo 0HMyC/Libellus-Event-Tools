@@ -24,6 +24,7 @@
 			PmdTargetTypeID.FADE => new PmdTarget_Fade(),
 			PmdTargetTypeID.QUAKE => new PmdTarget_Quake(),
 			PmdTargetTypeID.BGM => new PmdTarget_Bgm(),
+			PmdTargetTypeID.PADACT => new PmdTarget_Padact(),
 			PmdTargetTypeID.CTLCAM => new PmdTarget_Ctlcam(),
 			PmdTargetTypeID.CUTIN => new PmdTarget_Cutin(),
 			PmdTargetTypeID.JUMP => new PmdTarget_Jump(),
@@ -33,6 +34,7 @@
 			_ => new PmdTarget_Unknown()
 		};
 
+		// Names + ID's taken from P4G; earlier games have different strings in their binaries
 		public enum PmdTargetTypeID
 		{
 			STAGE = 0,
@@ -60,7 +62,7 @@
 			FB = 22,
 			RBLUR = 23,
 			TMX = 24,
-
+			// RAIN = 25, TODO: Confirm this? Seemingly not present in "used" P4G Event Editor strings?
 			EPL = 26,
 			HBLUR = 27,
 			PADACT = 28,
