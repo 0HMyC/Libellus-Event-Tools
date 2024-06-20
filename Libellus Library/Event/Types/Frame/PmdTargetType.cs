@@ -1,5 +1,6 @@
 ﻿using LibellusLibrary.JSON;
 using System.Text.Json.Serialization;
+using LibellusLibrary.Event.Types.Frame.Twelve;
 using static LibellusLibrary.Event.Types.Frame.PmdFrameFactory;
 
 namespace LibellusLibrary.Event.Types.Frame

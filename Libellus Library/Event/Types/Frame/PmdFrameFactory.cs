@@ -2,7 +2,7 @@
 {
 	public class PmdFrameFactory
 	{
-		public List<PmdTargetType> ReadDataTypes(BinaryReader reader, uint typeTableCount)
+		public List<PmdTargetType> ReadDataTypes(BinaryReader reader, uint typeTableCount, uint version)
 		{
 			List<PmdTargetType> frames = new();
 

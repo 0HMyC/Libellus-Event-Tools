@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 // Original file used spaces as tabs; retain that for better diffs
-namespace LibellusLibrary.Event.Types.Frame
+namespace LibellusLibrary.Event.Types.Frame.Twelve
 {
     public class PmdFlags
     {
