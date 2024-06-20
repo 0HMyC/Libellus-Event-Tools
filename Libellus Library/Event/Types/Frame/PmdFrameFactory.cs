@@ -9,7 +9,7 @@
 			for (int i = 0; i < typeTableCount; i++)
 			{
 				long start = reader.BaseStream.Position;
-				PmdTargetType dataType = GetFrameType((PmdTargetTypeID)reader.ReadUInt16());
+				PmdTargetType dataType = GetFrameType((PmdTargetTypeID)reader.ReadUInt16(), version);
 				reader.BaseStream.Position = start;
 				dataType.ReadFrame(reader);
 				frames.Add(dataType);
@@ -17,7 +17,7 @@
 			return frames;
 		}
 
-		public static PmdTargetType GetFrameType(PmdTargetTypeID Type) => Type switch
+		public static PmdTargetType GetFrameType(PmdTargetTypeID Type, uint version) => Type switch
 		{
 			PmdTargetTypeID.UNIT => new PmdTarget_Unit(),
 			PmdTargetTypeID.MESSAGE => new PmdTarget_Message(),
@@ -31,7 +31,7 @@
 			PmdTargetTypeID.CUSTOMEVENT => new PmdTarget_CustomEvent(),
 			PmdTargetTypeID.SCRIPT => new PmdTarget_Script(),
 			PmdTargetTypeID.FOG => new PmdTarget_Fog(),
-			_ => new PmdTarget_Unknown()
+			_ => new V12Target_Unknown(version)
 		};
 
 		// Names + ID's taken from P4G; earlier games have different strings in their binaries

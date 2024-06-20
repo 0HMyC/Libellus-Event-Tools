@@ -22,12 +22,60 @@ namespace LibellusLibrary.Event.Types.Frame
 		public byte Field09 { get; set; }
 		[JsonPropertyOrder(-94)]
 		public short Field0A { get; set; }
+
+		public virtual void ReadFrame(BinaryReader reader) => throw new NotImplementedException();
+		public virtual void WriteFrame(BinaryWriter writer) => throw new NotImplementedException();
+		protected virtual void ReadData(BinaryReader reader) => throw new InvalidOperationException();
+		protected virtual void WriteData(BinaryWriter writer) => throw new InvalidOperationException();
+	}
+
+	internal class V9TargetType : PmdTargetType
+	{
+		public override void ReadFrame(BinaryReader reader)
+		{
+			TargetType = (PmdTargetTypeID)reader.ReadUInt16();
+			StartFrame = reader.ReadUInt16();
+			Length = reader.ReadUInt16();
+			NameIndex = reader.ReadInt16();
+			FBNResourceID = reader.ReadByte();
+			Field09 = reader.ReadByte();
+			Field0A = reader.ReadInt16();
+			ReadData(reader);
+		}
+		public override void WriteFrame(BinaryWriter writer)
+		{
+			writer.Write((ushort)TargetType);
+			writer.Write(StartFrame);
+			writer.Write(Length);
+			writer.Write(NameIndex);
+			writer.Write(FBNResourceID);
+			writer.Write(Field09);
+			writer.Write(Field0A);
+			WriteData(writer);
+		}
+	}
+	internal class V9Target_Unknown : V9TargetType
+	{
+		[JsonConverter(typeof(ByteArrayToHexArray))]
+		public byte[] Data { get; set; } = Array.Empty<byte>();
+		protected override void ReadData(BinaryReader reader)
+		{
+			Data = reader.ReadBytes(0x20);
+		}
+
+		protected override void WriteData(BinaryWriter writer)
+		{
+			writer.Write(Data);
+		}
+	}
+
+	internal class V12TargetType : PmdTargetType
+	{
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 		[JsonPropertyOrder(-93)]
 		public PmdFlags Flags { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
-		public void ReadFrame(BinaryReader reader)
+		public override void ReadFrame(BinaryReader reader)
 		{
 			TargetType = (PmdTargetTypeID)reader.ReadUInt16();
 			StartFrame = reader.ReadUInt16();
@@ -40,7 +88,7 @@ namespace LibellusLibrary.Event.Types.Frame
 			Flags.ReadData(reader);
 			ReadData(reader);
 		}
-		public void WriteFrame(BinaryWriter writer)
+		public override void WriteFrame(BinaryWriter writer)
 		{
 			writer.Write((ushort)TargetType);
 			writer.Write(StartFrame);
@@ -52,11 +100,8 @@ namespace LibellusLibrary.Event.Types.Frame
 			Flags.WriteData(writer);
 			WriteData(writer);
 		}
-		protected virtual void ReadData(BinaryReader reader) => throw new InvalidOperationException();
-		protected virtual void WriteData(BinaryWriter writer) => throw new InvalidOperationException();
 	}
-
-	internal class PmdTarget_Unknown : PmdTargetType
+	internal class V12Target_Unknown : V12TargetType
 	{
 		[JsonConverter(typeof(ByteArrayToHexArray))]
 		public byte[] Data { get; set; } = Array.Empty<byte>();
