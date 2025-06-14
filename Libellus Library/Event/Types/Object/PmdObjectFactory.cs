@@ -4,7 +4,7 @@ namespace LibellusLibrary.Event.Types.Object
 {
 	public class PmdObjectFactory
 	{
-		public List<PmdObjectType> ReadDataTypes(BinaryReader reader, uint typeTableCount)
+		public static List<PmdObjectType> ReadDataTypes(BinaryReader reader, uint typeTableCount)
 		{
 			List<PmdObjectType> objects = new();
 
