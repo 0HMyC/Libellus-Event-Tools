@@ -30,12 +30,16 @@ namespace LibellusLibrary.Event.Types
 			MessageData = reader.ReadBytes(size);
 			foreach (string name in typeFactory.GetNameTable(reader))
 			{
-				if (name.EndsWith(".msg"))
+				// TODO: Maybe use a var instead of calling ToLower twice here?
+				// Not super important but it might maybe be more performant/resource efficient lol
+				if (name.ToLower().EndsWith(".msg"))
 				{
-					FileName = name.Substring(0, name.LastIndexOf('.')) + ".bmd";
+					// Check if original filename is uppercase via extension,
+					// using uppercase .BMD extensions if it is for accuracy
+					FileName = string.Concat(name.AsSpan(0, name.LastIndexOf('.')), name.EndsWith(".MSG") ? ".BMD" : ".bmd");
 					break;
 				}
-				else if (name.EndsWith(".bmd"))
+				else if (name.ToLower().EndsWith(".bmd"))
 				{
 					FileName = name;
 					break;
@@ -88,9 +92,11 @@ namespace LibellusLibrary.Event.Types
 			{
 				return;
 			}
-			if (FileName.EndsWith(".bmd"))
+			if (FileName.ToLower().EndsWith(".bmd"))
 			{
-				FileName = FileName.Substring(0, FileName.LastIndexOf('.')) + ".msg";
+				// Check if original filename is uppercase via extension,
+				// using uppercase .BMD extensions if it is for accuracy
+				FileName = string.Concat(FileName.AsSpan(0, FileName.LastIndexOf('.')), FileName.EndsWith(".BMD") ? ".MSG" : ".msg");
 			}
 			byte[] temp = Text.StringtoASCII8(FileName);
 			Array.Resize(ref temp, 32);
