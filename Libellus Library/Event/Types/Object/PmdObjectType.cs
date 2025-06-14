@@ -13,7 +13,7 @@ namespace LibellusLibrary.Event.Types.Object
 		[JsonPropertyOrder(-99)]
 		public byte SlotOrID_Field01 { get; set; }
 		[JsonPropertyOrder(-98)]
-		public short Field02 { get; set; }
+		public short NameIndex { get; set; } // NameIndex definitely true for v9, unsure about v10+ but probably same?
 		[JsonPropertyOrder(-97)]
 		public short Field04 { get; set; }
 
@@ -21,7 +21,7 @@ namespace LibellusLibrary.Event.Types.Object
 		{
 			ObjectID = (PmdTargetTypeID)reader.ReadByte();
 			SlotOrID_Field01 = reader.ReadByte();
-			Field02 = reader.ReadInt16();
+			NameIndex = reader.ReadInt16();
 			Field04 = reader.ReadInt16();
 			ReadData(reader);
 		}
@@ -30,7 +30,7 @@ namespace LibellusLibrary.Event.Types.Object
 		{
 			writer.Write((byte)ObjectID);
 			writer.Write(SlotOrID_Field01);
-			writer.Write(Field02);
+			writer.Write(NameIndex);
 			writer.Write(Field04);
 			WriteData(writer);
 		}
@@ -55,6 +55,25 @@ namespace LibellusLibrary.Event.Types.Object
 		{
 			writer.Write(Data);
 			writer.Write(Field10);
+		}
+	}
+
+	internal class DDSObject_Unknown : PmdObjectType
+	{
+		[JsonPropertyOrder(-96)]
+		public byte Field06 { get; set; }
+		[JsonPropertyOrder(-95)]
+		public byte Field07 { get; set; }
+		protected override void ReadData(BinaryReader reader)
+		{
+			Field06 = reader.ReadByte();
+			Field07 = reader.ReadByte();
+		}
+
+		protected override void WriteData(BinaryWriter writer)
+		{
+			writer.Write(Field06);
+			writer.Write(Field07);
 		}
 	}
 }
