@@ -56,13 +56,14 @@ V10 & V11 (Unused only), V12 (P3/P4) Extensions
 +----------------+--------------+------------------------------------------------------------------------------+
 | Field0A        | Short        | Unknown.                                                                     |
 +----------------+--------------+------------------------------------------------------------------------------+
-| Flags          | PmdFlags     | Used when a target's execution is conditional.                               |
-|                |              | (ie. based upon a dialogue option or a bitflag)                              |
-|                |              |                                                                              |
+
+Following these are the `Flags` 'struct', which are used to determine if the Target's execution will be conditional and if so what will allow the execution.
+
++----------------+--------------+------------------------------------------------------------------------------+
 | FlagNumber     | UShort       | Which flag to check                                                          |
-|                |              |                                                                              |
++----------------+--------------+------------------------------------------------------------------------------+
 | CompareValue   | UShort       | Value that flag or stored SEL option should be equal to.                     |
-|                |              |                                                                              |
++----------------+--------------+------------------------------------------------------------------------------+
 | FlagType       | Enum (UShort)| Determines what type of flags are used or if comparision should happen at all|
 |                |              |                                                                              |
 |                |              | Values:                                                                      |
@@ -70,7 +71,7 @@ V10 & V11 (Unused only), V12 (P3/P4) Extensions
 |                |              | 0. DISABLE                                                                   |
 |                |              | 1. LOCAL                                                                     |
 |                |              | 2. GLOABAL                                                                   |
-|                |              |                                                                              |
++----------------+--------------+------------------------------------------------------------------------------+
 | GlobalFlagType | Enum (UShort)| Determines which offset to use when comparing against "GLOBAL" bitflags.     |
 |                |              |                                                                              |
 |                |              | Values:                                                                      |
