@@ -17,7 +17,8 @@ These files are referred to as PMD (which is short for Polygon Movie Data or Pol
   - Used in Digital Devil Saga 1&2
 - 10 (Partial)
   - Unused PMD's of this version can be found in Persona 3's files
-- 11 (Partial)
-  - Unused PMD's of this version can be found in Persona 3's files
+- 11 (Partial, P3 Unused only)
+  - Used in Devil Summoner: Raidou Kuzunoha vs. the Soulless Army
+  - Unused PMD's identifying as this version can be found in Persona 3's files, but are actually v12 format
 - 12
   - Used in Persona 3/FES, Persona 4/Golden
