@@ -78,11 +78,10 @@ namespace LibellusLibrary.Event.Types
 			{
 				writer.FSeek(start + i * 0x20);
 				Units[i].WriteUnit(writer, dataOffset);
-				dataOffset += Units[i].UnitData.Length;
+				int modSize = Units[i].UnitData.Length % 0x10;
 				// Align dataOffset to 0x10 increment as is needed for RMD files
-				long alignedOffset = dataOffset - (dataOffset % 0x10) + 0x10;
-				writer.Write(new byte[alignedOffset - dataOffset]);
-				dataOffset = alignedOffset;
+				dataOffset += modSize == 0 ? Units[i].UnitData.Length : (Units[i].UnitData.Length - modSize) + 0x10;
+				writer.Write(new byte[modSize]);
 			}
 			// if we overrode the offset to write RMD's to, seek to the end of the Unit headers
 			// so that the other tables/files can be stored into the PMD correctly still
