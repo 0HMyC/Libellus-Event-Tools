@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using LibellusLibrary.Utils;
 using LibellusLibrary.Utils.IO;
 
@@ -40,7 +40,9 @@ namespace LibellusLibrary.Event.Types
 			int size = 0;
 			foreach (Pmd_UnitDef unit in Units)
 			{
-				size += unit.UnitData.Length - (unit.UnitData.Length % 0x10) + 0x10;
+				// Only align file data to 0x10 if the file is not already aligned
+				int modSize = unit.UnitData.Length % 0x10;
+				size += modSize == 0 ? unit.UnitData.Length : (unit.UnitData.Length - modSize) + 0x10;
 			}
 			return size;
 		}
