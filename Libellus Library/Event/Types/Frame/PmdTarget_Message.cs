@@ -38,6 +38,19 @@ namespace LibellusLibrary.Event.Types.Frame
 
         [JsonPropertyOrder(-91)]
         public byte SetLocalFlag { get; set; }
+        // Values range from 0x00 (NOTUSE) to 0xA0 (RESERVE), incrementing by 0x10
+        // TODO: Turn values below into array?
+        // 0x00 (NOTUSE)
+        // 0x10 (0)
+        // 0x20 (1)
+        // 0x30 (2)
+        // 0x40 (3)
+        // 0x50 (4)
+        // 0x60 (5)
+        // 0x70 (HOUKAGO SASOI); Roughly means "After School Invite"
+        // 0x80 (KYUJITU SASOI); Probably some kind of Invite given SASOI, unsure of KYUJITU meaning
+        // 0x90 (BASHO2 IKU?)
+        // 0xA0 (RESERVE)
 
         [JsonPropertyOrder(-90)]
         public ushort Field16 { get; set; }
