@@ -8,6 +8,14 @@ namespace LibellusEventTool
 		/// Controls whether to convert all PMD or JSON files contained within a passed folder and it's subfolders.
 		/// </summary>
 		private static bool _recurse = false;
+
+		private static void Warn(string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.Write($"[WARN] ");
+			Console.ResetColor();
+			Console.WriteLine(message);
+		}
 		static async Task Main(string[] args)
 		{
 			System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -19,9 +27,11 @@ namespace LibellusEventTool
 			int numberPaths = _recurse ? args.Length - 1 : args.Length;
 			if (numberPaths < 1)
 			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("Not enough args!");
-				Console.ResetColor();
+				Warn("Not enough args!\n");
+				Console.WriteLine($"usage: \"{Path.GetFileNameWithoutExtension(assembly.Location)}\" [-r] <PATH>...");
+				Console.WriteLine("options:");
+				Console.WriteLine("  -r, \tControls whether to convert all PMD or JSON"); 
+				Console.WriteLine("      \tfiles contained within a passed folder and it's subfolders.\n");
 				Console.WriteLine("Press any button to exit.");
 				Console.ReadKey();
 				return;
@@ -33,29 +43,50 @@ namespace LibellusEventTool
 
 		private static async Task ConvertPaths(string[] paths)
 		{
-			foreach (string file in paths)
+			foreach (string current_path in paths)
 			{
-				string ext = Path.GetExtension(file).ToLower();
+				if (!File.Exists(current_path) && !Directory.Exists(current_path))
+				{
+					Warn($"'{current_path}' is not a valid file or directory!");
+					continue;
+				}
+				
+				string ext = Path.GetExtension(current_path).ToLower();
 				if (ext == ".pm1" || ext == ".pm2" || ext == ".pm3")
 				{
-					Console.WriteLine($"Coverting to Json: {file}");
+					Console.WriteLine($"Converting to Json: {current_path}");
 					PmdReader reader = new();
-					PolyMovieData pmd = await reader.ReadPmd(file);
 					// the "!" in Path.GetDirectoryName(file)! indicates null forgiveness; should be safe & addresses CS8604
-					string folder = Path.Combine(Path.GetDirectoryName(file)!, Path.GetFileNameWithoutExtension(file));
-					await pmd.ExtractPmd(folder, Path.GetFileName(file));
+					string folder = Path.Combine(Path.GetDirectoryName(current_path)!, Path.GetFileNameWithoutExtension(current_path));
+					try
+					{
+                        PolyMovieData pmd = await reader.ReadPmd(current_path);
+                        await pmd.ExtractPmd(folder, Path.GetFileName(current_path));
+					}
+					catch (Exception ex)
+					{
+						Warn($"Cannot extract '{current_path}': {ex.Message}");
+					}
 				}
 				else if (ext == ".json")
 				{
-					Console.WriteLine($"Coverting to PMD: {file}");
-					PolyMovieData pmd = await PolyMovieData.LoadPmd(file);
-					pmd.SavePmd($"{file}.PM{pmd.MagicCode[3]}");
+					Console.WriteLine($"Converting to PMD: {current_path}");
+					try
+					{
+                        PolyMovieData pmd = await PolyMovieData.LoadPmd(current_path);
+                        pmd.SavePmd($"{current_path}.PM{pmd.MagicCode[3]}");
+                    }
+					catch (Exception ex)
+					{
+						Warn($"Cannot convert '{current_path}' to PMD: {ex.Message}");
+					}
 				}
-				else if (Directory.Exists(file))
+				else if (Directory.Exists(current_path))
 				{
-					await ConvertPaths(Directory.GetFiles(file, "*", _recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
+					await ConvertPaths(Directory.GetFiles(current_path, "*", _recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
 				}
 			}
+			Console.Write("\n");
 		}
 	}
 }
