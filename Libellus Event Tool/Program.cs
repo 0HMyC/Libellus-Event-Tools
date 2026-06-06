@@ -21,7 +21,6 @@ namespace LibellusEventTool
 			System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
 			System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
 			string version = fvi.FileVersion ?? "Null Version"; // Address CS8600 warning
-			string fileName = Path.GetFileNameWithoutExtension(assembly.Location);
 			Console.WriteLine($"Welcome to LEET!\nLibellus Event Editing Tool: v{version}\nNow with better syntax!\n");
 
 			_recurse = args.Contains("-r", StringComparer.OrdinalIgnoreCase);
@@ -29,10 +28,10 @@ namespace LibellusEventTool
 			if (numberPaths < 1)
 			{
 				Warn("Not enough args!\n");
-				Console.WriteLine($"usage: \"{fileName}\" [-r] <PATH>...");
+				Console.WriteLine($"usage: \"{Path.GetFileNameWithoutExtension(assembly.Location)}\" [-r] <PATH>...");
 				Console.WriteLine("options:");
-				Console.WriteLine("  -r,    Controls whether to convert all PMD or JSON\n" + 
-				                  "         files contained within a passed folder and it's subfolders.\n");
+				Console.WriteLine("  -r, \tControls whether to convert all PMD or JSON"); 
+				Console.WriteLine("      \tfiles contained within a passed folder and it's subfolders.\n");
 				Console.WriteLine("Press any button to exit.");
 				Console.ReadKey();
 				return;
@@ -44,50 +43,50 @@ namespace LibellusEventTool
 
 		private static async Task ConvertPaths(string[] paths)
 		{
-			foreach (string path in paths)
+			foreach (string current_path in paths)
 			{
-				if (!File.Exists(path) && !Directory.Exists(path))
+				if (!File.Exists(current_path) && !Directory.Exists(current_path))
 				{
-					Warn($"'{path}' is not a valid file or directory!");
+					Warn($"'{current_path}' is not a valid file or directory!");
 					continue;
 				}
 				
-				string ext = Path.GetExtension(path).ToLower();
+				string ext = Path.GetExtension(current_path).ToLower();
 				if (ext == ".pm1" || ext == ".pm2" || ext == ".pm3")
 				{
-					Console.WriteLine($"Converting to Json: {path}");
+					Console.WriteLine($"Converting to Json: {current_path}");
 					PmdReader reader = new();
-					PolyMovieData pmd = await reader.ReadPmd(path);
+					PolyMovieData pmd = await reader.ReadPmd(current_path);
 					// the "!" in Path.GetDirectoryName(file)! indicates null forgiveness; should be safe & addresses CS8604
-					string folder = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path));
+					string folder = Path.Combine(Path.GetDirectoryName(current_path)!, Path.GetFileNameWithoutExtension(current_path));
 					try
 					{
-						await pmd.ExtractPmd(folder, Path.GetFileName(path));
+						await pmd.ExtractPmd(folder, Path.GetFileName(current_path));
 					}
 					catch (Exception ex)
 					{
-						Warn($"Cannot extract '{path}': {ex.Message}");
+						Warn($"Cannot extract '{current_path}': {ex.Message}");
 					}
 				}
 				else if (ext == ".json")
 				{
-					Console.WriteLine($"Converting to PMD: {path}");
+					Console.WriteLine($"Converting to PMD: {current_path}");
 					PolyMovieData pmd = new PolyMovieData();
 					try
 					{
-						pmd = await PolyMovieData.LoadPmd(path);
+						pmd = await PolyMovieData.LoadPmd(current_path);
 					}
 					catch (Exception ex)
 					{
-						Warn($"Cannot convert '{path}' to PMD: {ex.Message}");
+						Warn($"Cannot convert '{current_path}' to PMD: {ex.Message}");
 						continue;
 					}
 					
-					pmd.SavePmd($"{path}.PM{pmd.MagicCode[3]}");
+					pmd.SavePmd($"{current_path}.PM{pmd.MagicCode[3]}");
 				}
-				else if (Directory.Exists(path))
+				else if (Directory.Exists(current_path))
 				{
-					await ConvertPaths(Directory.GetFiles(path, "*", _recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
+					await ConvertPaths(Directory.GetFiles(current_path, "*", _recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
 				}
 			}
 			Console.Write("\n");
