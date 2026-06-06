@@ -56,12 +56,12 @@ namespace LibellusEventTool
 				{
 					Console.WriteLine($"Converting to Json: {current_path}");
 					PmdReader reader = new();
-					PolyMovieData pmd = await reader.ReadPmd(current_path);
 					// the "!" in Path.GetDirectoryName(file)! indicates null forgiveness; should be safe & addresses CS8604
 					string folder = Path.Combine(Path.GetDirectoryName(current_path)!, Path.GetFileNameWithoutExtension(current_path));
 					try
 					{
-						await pmd.ExtractPmd(folder, Path.GetFileName(current_path));
+                        PolyMovieData pmd = await reader.ReadPmd(current_path);
+                        await pmd.ExtractPmd(folder, Path.GetFileName(current_path));
 					}
 					catch (Exception ex)
 					{
@@ -71,18 +71,15 @@ namespace LibellusEventTool
 				else if (ext == ".json")
 				{
 					Console.WriteLine($"Converting to PMD: {current_path}");
-					PolyMovieData pmd = new PolyMovieData();
 					try
 					{
-						pmd = await PolyMovieData.LoadPmd(current_path);
-					}
+                        PolyMovieData pmd = await PolyMovieData.LoadPmd(current_path);
+                        pmd.SavePmd($"{current_path}.PM{pmd.MagicCode[3]}");
+                    }
 					catch (Exception ex)
 					{
 						Warn($"Cannot convert '{current_path}' to PMD: {ex.Message}");
-						continue;
 					}
-					
-					pmd.SavePmd($"{current_path}.PM{pmd.MagicCode[3]}");
 				}
 				else if (Directory.Exists(current_path))
 				{
